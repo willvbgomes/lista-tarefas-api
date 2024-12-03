@@ -1,0 +1,18 @@
+{
+  "name": "task-list-api",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts"
+  },
+  "keywords": [],
+  "author": "William Vilas Boas Gomes",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
