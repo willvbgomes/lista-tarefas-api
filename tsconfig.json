@@ -1,17 +1,3 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Node 21",
-  "_version": "21.0.0",
-
-  "compilerOptions": {
-    "lib": ["es2023"],
-    "module": "node16",
-    "target": "es2022",
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "moduleResolution": "node16"
-  }
+  "extends": "@tsconfig/node21/tsconfig.json"
 }

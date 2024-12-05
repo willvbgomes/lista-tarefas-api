@@ -1,7 +1,6 @@
 {
   "name": "task-list-api",
   "version": "1.0.0",
-  "type": "module",
   "description": "",
   "main": "src/server.ts",
   "scripts": {
@@ -11,6 +10,7 @@
   "author": "William Vilas Boas Gomes",
   "license": "ISC",
   "devDependencies": {
+    "@tsconfig/node21": "^21.0.3",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.1",
     "tsx": "^4.19.2",
