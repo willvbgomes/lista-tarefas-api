@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/server.ts",
   "scripts": {
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch --env-file .env src/server.ts"
   },
   "keywords": [],
   "author": "William Vilas Boas Gomes",
@@ -13,10 +13,12 @@
     "@tsconfig/node21": "^21.0.3",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.1",
+    "prisma": "^6.1.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {
+    "@prisma/client": "^6.1.0",
     "express": "^4.21.1"
   }
 }
