@@ -1,41 +1,72 @@
-import { randomUUID } from 'node:crypto'
-import { Task } from './task-model'
+import { prisma } from '../database/prisma'
+import { setNewError } from '../utils'
 
-export type List = {
-  id: string
-  title: string
-  tasks: Task[]
-  totalTasks: number
-}
+export const getAllLists = async () =>
+  await prisma.list.findMany({
+    include: {
+      tasks: {
+        select: {
+          id: true,
+          description: true,
+          isCompleted: true,
+        },
+      },
+    },
+  })
 
-export let lists: List[] = []
+export const getListById = async (id: string) =>
+  await prisma.list.findUnique({
+    where: { id },
+    include: {
+      tasks: {
+        select: {
+          id: true,
+          description: true,
+          isCompleted: true,
+        },
+      },
+    },
+  })
 
-export const getAllLists = () => lists
-
-export const getListById = (id: string) =>
-  lists.find((list: List) => list.id === id)
-
-export const createNewList = (title: string) => {
-  const newList: List = {
-    id: randomUUID(),
-    title,
-    tasks: [],
-    totalTasks: 0,
-  }
-
-  lists.push(newList)
+export const createNewList = async (title: string) => {
+  const newList = await prisma.list.create({
+    data: {
+      title,
+    },
+  })
 
   return newList
 }
 
-export const setNewTitle = (list: List, newTitle: string) => {
-  list.title = newTitle
+export const renameList = async (id: string, newTitle: string) => {
+  const list = await prisma.list.findUnique({
+    where: { id },
+  })
 
-  return list
+  if (!list) {
+    throw setNewError('List not found.', 404)
+  }
+
+  const renamedList = await prisma.list.update({
+    where: { id },
+    data: {
+      title: newTitle,
+    },
+  })
+
+  return renamedList
 }
 
-export const deleteList = (list: List) => {
-  const listIndex = lists.indexOf(list)
+export const deleteList = async (id: string) => {
+  const list = await prisma.list.findUnique({
+    where: { id },
+  })
 
-  lists.splice(listIndex, 1)
+  if (!list) {
+    throw setNewError('List not found.', 404)
+  }
+
+  await prisma.list.delete({
+    where: { id },
+  })
 }
