@@ -2,71 +2,57 @@ import { Request, Response } from 'express'
 import * as listModel from '../models/list-model'
 import { handleError } from '../utils'
 
-export const getLists = (_req: Request, res: Response) => {
+export const getLists = async (_req: Request, res: Response) => {
   try {
-    const lists = listModel.getAllLists()
+    const lists = await listModel.getAllLists()
 
     res.status(200).json(lists)
   } catch (error: unknown) {
-    const errorMessage = handleError(error)
+    const { errorMessage, errorStatus } = handleError(error)
 
-    res.status(500).json({ message: errorMessage })
+    res.status(errorStatus).json({ message: errorMessage })
   }
 }
 
-export const createList = (req: Request, res: Response) => {
+export const createList = async (req: Request, res: Response) => {
   const { title } = req.body
 
   try {
-    const newList = listModel.createNewList(title)
+    const newList = await listModel.createNewList(title)
 
     res.status(201).json(newList)
   } catch (error: unknown) {
-    const errorMessage = handleError(error)
+    const { errorMessage, errorStatus } = handleError(error)
 
-    res.status(500).json({ message: errorMessage })
+    res.status(errorStatus).json({ message: errorMessage })
   }
 }
 
-export const renameList = (req: Request, res: Response) => {
+export const updateList = async (req: Request, res: Response) => {
   const { listId } = req.params
   const { newTitle } = req.body
 
   try {
-    const list = listModel.getListById(listId)
+    const updatedList = await listModel.renameList(listId, newTitle)
 
-    if (!list) {
-      res.status(404).json('List not found.')
-      return
-    }
-
-    const renamedList = listModel.setNewTitle(list, newTitle)
-
-    res.status(200).json(renamedList)
+    res.status(200).json(updatedList)
   } catch (error: unknown) {
-    const errorMessage = handleError(error)
+    const { errorMessage, errorStatus } = handleError(error)
 
-    res.status(500).json({ message: errorMessage })
+    res.status(errorStatus).json({ message: errorMessage })
   }
 }
 
-export const deleteList = (req: Request, res: Response) => {
+export const deleteList = async (req: Request, res: Response) => {
   const { listId } = req.params
 
   try {
-    const list = listModel.getListById(listId)
-
-    if (!list) {
-      res.status(404).json('List not found.')
-      return
-    }
-
-    listModel.deleteList(list)
+    await listModel.deleteList(listId)
 
     res.status(200).json({ message: 'The list has been successfully deleted.' })
   } catch (error: unknown) {
-    const errorMessage = handleError(error)
+    const { errorMessage, errorStatus } = handleError(error)
 
-    res.status(500).json({ message: errorMessage })
+    res.status(errorStatus).json({ message: errorMessage })
   }
 }
