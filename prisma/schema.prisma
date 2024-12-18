@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Task {
+  id          String  @id @default(uuid())
+  description String
+  isCompleted Boolean @default(false) @map("is_completed")
+  listId      String  @map("list_id")
+  list        List    @relation(fields: [listId], references: [id])
+
+  @@map("tasks")
+}
+
+model List {
+  id         String @id @default(uuid())
+  title      String
+  totalTasks Int    @default(0) @map("total_tasks")
+  tasks      Task[]
+
+  @@map("lists")
+}
