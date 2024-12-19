@@ -6,7 +6,7 @@ const router = Router()
 
 router.get('/lists', listController.getLists)
 router.post('/lists', listController.createList)
-router.patch('/lists/:listId', listController.renameList)
+router.patch('/lists/:listId', listController.updateList)
 router.delete('/lists/:listId', listController.deleteList)
 
 router.get('/lists/:listId/tasks', taskController.getTasks)
