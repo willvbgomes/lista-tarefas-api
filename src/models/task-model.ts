@@ -1,43 +1,89 @@
-import { randomUUID } from 'node:crypto'
-import { List } from './list-model'
+import { prisma } from '../database/prisma'
+import { setNewError } from '../utils'
+import { getListById } from './list-model'
 
-export type Task = {
-  id: string
-  description: string
-  isCompleted: boolean
-}
+export const createNewTask = async (listId: string, description: string) => {
+  const list = await getListById(listId)
 
-export const getAllTasks = (list: List) => list.tasks
-
-export const getTaskById = (list: List, id: string) =>
-  list.tasks.find((task: Task) => task.id === id)
-
-export const createNewTask = (list: List, body: Pick<Task, 'description'>) => {
-  const { description } = body
-
-  const newTask: Task = {
-    id: randomUUID(),
-    description,
-    isCompleted: false,
+  if (!list) {
+    throw setNewError('List not found.', 404)
   }
 
-  list.tasks.push(newTask)
-  list.totalTasks++
+  const newTask = await prisma.$transaction(async prisma => {
+    const task = await prisma.task.create({
+      data: {
+        description,
+        listId,
+      },
+    })
+
+    await prisma.list.update({
+      where: { id: listId },
+      data: {
+        totalTasks: { increment: 1 },
+      },
+    })
+
+    return task
+  })
 
   return newTask
 }
 
-export const toggleTask = (task: Task) => {
-  const status = task.isCompleted
+export const toggleTask = async (listId: string, taskId: string) => {
+  const list = await getListById(listId)
 
-  task.isCompleted = !status
+  if (!list) {
+    throw setNewError('List not found.', 404)
+  }
 
-  return task
+  const updatedTask = prisma.$transaction(async prisma => {
+    const task = await prisma.task.findUnique({
+      where: { id: taskId },
+    })
+
+    if (!task) {
+      throw setNewError('Task not found.', 404)
+    }
+
+    const toggledTask = prisma.task.update({
+      where: { id: taskId },
+      data: {
+        isCompleted: !task?.isCompleted,
+      },
+    })
+
+    return toggledTask
+  })
+
+  return updatedTask
 }
 
-export const deleteTask = (list: List, task: Task) => {
-  const taskIndex = list.tasks.indexOf(task)
+export const deleteTask = async (listId: string, taskId: string) => {
+  const list = await getListById(listId)
 
-  list.tasks.splice(taskIndex, 1)
-  list.totalTasks--
+  if (!list) {
+    throw setNewError('List not found.', 404)
+  }
+
+  const task = await prisma.task.findUnique({
+    where: { id: taskId },
+  })
+
+  if (!task) {
+    throw setNewError('Task not found.', 404)
+  }
+
+  await prisma.$transaction(async prisma => {
+    await prisma.task.delete({
+      where: { id: taskId },
+    })
+
+    await prisma.list.update({
+      where: { id: listId },
+      data: {
+        totalTasks: { decrement: 1 },
+      },
+    })
+  })
 }
