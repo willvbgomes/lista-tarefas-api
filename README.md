@@ -1,6 +1,8 @@
 [Node Badge]: https://img.shields.io/badge/Node.js-5fa04e?style=for-the-badge&logo=nodedotjs&labelColor=000
 [Typescript Badge]: https://img.shields.io/badge/TypeScript-3178c6?style=for-the-badge&logo=typescript&labelColor=000
 [Express Badge]: https://img.shields.io/badge/Express-000?style=for-the-badge&logo=express&labelColor=000
+[Prisma Badge]: https://img.shields.io/badge/Prisma-2d3748?style=for-the-badge&logo=prisma&labelColor=000
+[Docker Badge]: https://img.shields.io/badge/Docker-2496ed?style=for-the-badge&logo=docker&labelColor=000
 
 <h1 align="center" style="font-weight: bold;">API de Lista de Tarefas</h1>
 
@@ -9,6 +11,8 @@
 ![node][Node Badge]
 ![typescript][Typescript Badge]
 ![express][Express Badge]
+![prisma][Prisma Badge]
+![docker][Docker Badge]
 
 </div>
 
@@ -28,6 +32,8 @@ Esta é uma API para gerenciamento de listas de tarefas. A API permite a criaç�
 - Node.js
 - Express
 - TypeScript
+- Prisma
+- Docker
 
 ## :arrow_down: Instalação
 
@@ -36,6 +42,8 @@ Esta é uma API para gerenciamento de listas de tarefas. A API permite a criaç�
 - [Node.js](https://nodejs.org/en/download/current)
 
 - [Git](https://git-scm.com/downloads)
+
+- [Docker](https://www.docker.com/get-started)
 
 ### 1. Clone o repositório
 
@@ -50,20 +58,37 @@ cd lista-tarefas-api
 npm install
 ```
 
-### 3. Configuração (Opcional)
+### 3. Configuração (opcional, caso utilize o Docker)
 
-Crie um arquivo .env na raiz do projeto com as variáveis de ambiente necessárias:
+Crie um arquivo .env na raiz do projeto com as variáveis de ambiente necessárias. Ex:
 
 ```
 PORT=3000
+DATABASE_URL="postgresql://user:password@localhost:5432/database_name?schema=public"
 ```
 
 ### 4. Rodando a API
+
+#### 4.1 Utilizando o Docker
+
+Para rodar a API em um ambiente de containers Docker:
+
+```bash
+docker compose up -d
+```
+
+#### 4.2 Sem utilizar o Docker
 
 Para rodar a API em modo de desenvolvimento com recarregamento automático:
 
 ```bash
 npm run dev
+```
+
+Atualize o banco de dados conforme o arquivo schema.prisma:
+
+```bash
+npx prisma migrate dev
 ```
 
 ## :dart: Endpoints da API
@@ -92,20 +117,20 @@ npm run dev
   {
     "id": "452edca5-4e2d-4d8a-a3f4-8ef17f8e2bf7",
     "title": "Lista de Compras",
+    "totalTasks": 1,
     "tasks": [
       {
         "id": "4c62f192-538d-40fa-a6c4-fa636210cebd",
         "description": "Comprar leite",
         "isCompleted": false
       }
-    ],
-    "totalTasks": 1
+    ]
   },
   {
     "id": "7c3d6237-5ea3-4c7f-9e71-a57562ee3d3b",
     "title": "Projetos do Trabalho",
-    "tasks": [],
-    "totalTasks": 0
+    "totalTasks": 0,
+    "tasks": []
   }
 ]
 ```
@@ -128,7 +153,6 @@ npm run dev
 {
   "id": "58f10d41-4c91-4083-908d-0f5287ba87ac",
   "title": "Nova Lista",
-  "tasks": [],
   "totalTasks": 0
 }
 ```
@@ -151,7 +175,6 @@ npm run dev
 {
   "id": "58f10d41-4c91-4083-908d-0f5287ba87ac",
   "title": "Título da lista atualizado",
-  "tasks": [],
   "totalTasks": 0
 }
 ```
@@ -200,7 +223,8 @@ npm run dev
 {
   "id": "20e1b40e-4b4d-479a-9834-5449d75c7af4",
   "description": "Comprar Pão",
-  "isCompleted": false
+  "isCompleted": false,
+  "listId": "4c62f192-538d-40fa-a6c4-fa636210cebd"
 }
 ```
 
@@ -214,7 +238,8 @@ npm run dev
 {
   "id": "20e1b40e-4b4d-479a-9834-5449d75c7af4",
   "description": "Comprar Pão",
-  "isCompleted": true
+  "isCompleted": true,
+  "listId": "4c62f192-538d-40fa-a6c4-fa636210cebd"
 }
 ```
 
